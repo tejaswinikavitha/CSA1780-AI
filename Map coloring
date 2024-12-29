@@ -1,0 +1,46 @@
+def is_valid_assignment(node, color, assignment, neighbors):
+    for neighbor in neighbors[node]:
+        if neighbor in assignment and assignment[neighbor] == color:
+            return False
+    return True
+def backtracking(assignment, nodes, colors, neighbors):
+    if len(assignment) == len(nodes):
+        return True
+    unassigned_nodes = [node for node in nodes if node not in assignment]
+    current_node = unassigned_nodes[0]
+
+    for color in colors:
+        if is_valid_assignment(current_node, color, assignment, neighbors):
+            assignment[current_node] = color 
+            if backtracking(assignment, nodes, colors, neighbors):
+                return True
+            del assignment[current_node]  
+
+    return False
+
+
+def map_coloring(nodes, colors, neighbors):
+    assignment = {}
+    if backtracking(assignment, nodes, colors, neighbors):
+        return assignment
+    else:
+        return None
+if __name__ == "__main__":
+    nodes = ["WA", "NT", "SA", "Q", "NSW", "V", "T"]
+    colors = ["Red", "Green", "Blue"]
+    neighbors = {
+        "WA": ["NT", "SA"],
+        "NT": ["WA", "SA", "Q"],
+        "SA": ["WA", "NT", "Q", "NSW", "V"],
+        "Q": ["NT", "SA", "NSW"],
+        "NSW": ["SA", "Q", "V"],
+        "V": ["SA", "NSW"],
+        "T": []
+    }
+    solution = map_coloring(nodes, colors, neighbors)
+    if solution:
+        print("Solution found:")
+        for region, color in solution.items():
+            print(f"{region}: {color}")
+    else:
+        print("No solution found.")
