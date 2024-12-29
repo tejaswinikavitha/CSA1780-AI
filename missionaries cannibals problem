@@ -1,0 +1,56 @@
+from collections import deque
+
+def is_valid_state(state):
+    m, c, b = state
+    if m < 0 or c < 0 or m > 3 or c > 3:
+        return False
+   
+    if m > 0 and m < c:
+        return False
+    # On the other side of the river, the same rule applies
+    if (3 - m) > 0 and (3 - m) < (3 - c):
+        return False
+    return True
+
+def get_successors(state):
+    """Generate all possible successor states."""
+    successors = []
+    m, c, b = state
+    moves = [(1, 0), (0, 1), (1, 1), (2, 0), (0, 2)]  # Possible moves
+    for move in moves:
+        m_delta, c_delta = move
+        if b == 1:  # Boat is on the starting side
+            new_state = (m - m_delta, c - c_delta, 0)
+        else:  # Boat is on the other side
+            new_state = (m + m_delta, c + c_delta, 1)
+        if is_valid_state(new_state):
+            successors.append(new_state)
+    return successors
+
+def missionaries_cannibals():
+    """Solve the Missionaries and Cannibals problem."""
+    initial_state = (3, 3, 1)  # (missionaries, cannibals, boat_side)
+    goal_state = (0, 0, 0)
+    queue = deque([(initial_state, [])])  # Queue for BFS: (state, path)
+    visited = set()
+
+    while queue:
+        current_state, path = queue.popleft()
+        if current_state in visited:
+            continue
+        visited.add(current_state)
+
+       
+        if current_state == goal_state:
+            return path + [current_state]
+        for successor in get_successors(current_state):
+            queue.append((successor, path + [current_state]))
+
+    return None  # No solution found
+solution = missionaries_cannibals()
+if solution:
+    print("Solution found:")
+    for step in solution:
+        print(step)
+else:
+    print("No solution found.")
