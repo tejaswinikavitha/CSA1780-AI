@@ -1,0 +1,47 @@
+class VacuumCleaner:
+    def __init__(self, environment):
+        self.environment = environment
+        self.location = "A"  # Start in room A
+        self.cleaning_steps = []
+
+    def sense_environment(self):
+        return self.environment[self.location]
+
+    def clean(self):
+        if self.environment[self.location] == "dirty":
+            self.environment[self.location] = "clean"
+            self.cleaning_steps.append(f"Cleaned {self.location}")
+
+    def move(self):
+       
+        if self.location == "A":
+            self.location = "B"
+        else:
+            self.location = "A"
+        self.cleaning_steps.append(f"Moved to {self.location}")
+
+    def run(self):
+      
+        while "dirty" in self.environment.values():
+            if self.sense_environment() == "dirty":
+                self.clean()
+            else:
+                self.move()
+
+        self.cleaning_steps.append("All rooms are clean.")
+def main():
+   
+    environment = {
+        "A": "dirty",
+        "B": "dirty"
+    }
+    print("Initial Environment:", environment)
+    vacuum = VacuumCleaner(environment)
+    vacuum.run()
+    print("\nSteps Taken by the Vacuum Cleaner:")
+    for step in vacuum.cleaning_steps:
+        print(step)
+
+    print("\nFinal Environment:", vacuum.environment)
+if __name__ == "__main__":
+    main()
